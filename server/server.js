@@ -1,23 +1,27 @@
 const path = require('path');
+const http = require('http');
 const express = require('express');
-const fs = require('fs');
+const socketIO = require('socket.io');
 
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 
 let app = express();
+let server = http.createServer(app);
+let io = socketIO(server);
 
 app.use(express.static(publicPath));
 
-/*
-app.get('/', (req, res) => {
-    fs.readFile(`${publicPath}/index.html`, 'utf8', (err, data) => {
-        console.log('data: ', data);
-        res.status(200).send(data);
+io.on('connection', (socket) => {
+    console.log('new user connected');
+
+    socket.on('disconnect', (socket) => {
+        console.log('client disconnected');
     });
 });
-*/
 
-app.listen(port, () => {
+
+
+server.listen(port, () => {
     console.log(`Started on port ${port}`);
 });
