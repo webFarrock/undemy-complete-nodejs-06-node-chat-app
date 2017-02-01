@@ -3,39 +3,43 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Node chat app</title>
+
+	<!--
 	<link rel="stylesheet" href="https://yastatic.net/bootstrap/3.3.6/css/bootstrap.min.css"/>
+	-->
+
+	<link rel="stylesheet" href="/css/styles.css"/>
+
 </head>
-<body>
+<body class="chat">
 
-<div class="container">
-	<div class="row">
-		<div class="col-md-6">
-			<h1>Chat app</h1>
-			<ul id="messages"></ul>
+<div class="chat__sidebar">
+	<h3>People</h3>
+	<div id="users"></div>
+</div>
 
-			<form id="message-form" class="form-inline">
-				<div class="form-group">
+<div class="chat__main">
+	<ol class="chat__messages" id="messages"></ol>
 
-					<input
-							name="message"
-							type="text"
-							class="form-control"
-							value=""
-							placeholder="Message"
-					/>
+	<div class="chat__footer">
+		<form id="message-form" >
+				<input
+					name="message"
+					type="text"
+					value=""
+					autofocus
+					autocomplete="off"
+					placeholder="Message"
+				/>
 
-					<button class="btn btn-primary">Send</button>
-				</div>
-			</form>
+				<button class="btn btn-primary">Send</button>
+		</form>
 
-		</div>
+
+		<button class="btn btn-primary" id="send-location">Send location</button>
+
 	</div>
 
-	<div class="row">
-		<div class="col-md-6">
-			<button class="btn btn-primary" id="send-location">Send Location</button>
-		</div>
-	</div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>

@@ -26,11 +26,12 @@ io.on('connection', (socket) => {
 
         io.emit('newMessage', generateMessage(message.from, message.text));
 
-        callback('This is from the server.');
+        callback();
     });
 
-    socket.on('createLocationMessage', (coords) => {
-        io.emit('newLocationMessage', generateLocationMessage('Admin', coords.lat, coords.lon))
+    socket.on('createLocationMessage', (coords, callback) => {
+        io.emit('newLocationMessage', generateLocationMessage(coords.from, coords.lat, coords.lon))
+        callback();
     });
 
     socket.on('disconnect', (socket) => {
