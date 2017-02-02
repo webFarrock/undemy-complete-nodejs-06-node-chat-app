@@ -90,7 +90,6 @@ $('#message-form').on('submit', function (e) {
 
     if (message) {
         socket.emit('createMessage', {
-            from: 'User',
             text: message,
         }, function (data) {
             $messageInput.val('');
@@ -114,7 +113,6 @@ $locationButton.on('click', function (e) {
     navigator.geolocation.getCurrentPosition(function (position) {
 
         socket.emit('createLocationMessage', {
-            from: "User",
             lat: position.coords.latitude,
             lon: position.coords.longitude,
         }, function () {
