@@ -1,6 +1,6 @@
 var socket = io();
 
-function scrollToBottom(){
+function scrollToBottom() {
     var messages = $('#messages');
     var newMessage = messages.children('li:last-child');
 
@@ -15,20 +15,43 @@ function scrollToBottom(){
     //console.log('scrollTop: ',scrollTop);
     //console.log('scrollHeight: ',scrollHeight);
 
-    if((clientHeight + scrollTop + newMessageHeight + lastMessageHeight ) >= scrollHeight){
+    if ((clientHeight + scrollTop + newMessageHeight + lastMessageHeight ) >= scrollHeight) {
         messages.scrollTop(scrollHeight);
     }
 }
 
+socket.on('updateUserList', function (users) {
+    var ol = $('<ol></ol>');
+
+    users.forEach(function(user){
+        ol.append(`
+            <li>${user}</li>
+        `);
+    });
+
+    $('#users').html(ol);
+});
+
+
 socket.on('connect', function () {
-    console.log('connected to server');
+
+    var params = $.deparam(window.location.search);
+
+    socket.emit('join', params, function (err) {
+        if (err) {
+            alert(err)
+            window.location.href = '/';
+        } else {
+            console.log('No error');
+        }
+    });
 });
 
 socket.on('disconnect', function () {
     console.log('disconnected from server');
 });
 
-socket.on('newMessage', function(message){
+socket.on('newMessage', function (message) {
     var formattedTime = moment(message.createdAt).format('h:mm a');
 
     var template = $('#message-template').html();
@@ -43,7 +66,7 @@ socket.on('newMessage', function(message){
     scrollToBottom();
 });
 
-socket.on('newLocationMessage', function(message){
+socket.on('newLocationMessage', function (message) {
     var formattedTime = moment(message.createdAt).format('h:mm a');
 
     var template = $('#location-message-template').html();
@@ -59,17 +82,17 @@ socket.on('newLocationMessage', function(message){
 });
 
 
-$('#message-form').on('submit', function(e){
+$('#message-form').on('submit', function (e) {
     e.preventDefault();
 
     var $messageInput = $('input[name=message]');
     var message = $messageInput.val();
 
-    if(message){
+    if (message) {
         socket.emit('createMessage', {
             from: 'User',
             text: message,
-        }, function (data){
+        }, function (data) {
             $messageInput.val('');
         });
 
@@ -79,8 +102,8 @@ $('#message-form').on('submit', function(e){
 
 var $locationButton = $('#send-location');
 
-$locationButton.on('click', function(e){
-    if (!navigator.geolocation){
+$locationButton.on('click', function (e) {
+    if (!navigator.geolocation) {
         return alert('Geolocation not supported by you browser');
     }
 
@@ -88,17 +111,17 @@ $locationButton.on('click', function(e){
 
     $this.attr('disabled', 'disabled').text('Sending location...');
 
-    navigator.geolocation.getCurrentPosition(function(position){
+    navigator.geolocation.getCurrentPosition(function (position) {
 
         socket.emit('createLocationMessage', {
             from: "User",
             lat: position.coords.latitude,
             lon: position.coords.longitude,
-        }, function(){
+        }, function () {
             $this.removeAttr('disabled').text('Send location');
         });
 
-    }, function(err){
+    }, function (err) {
         $this.removeAttr('disabled').text('Send location');
         alert('Unable to fetch location');
     });
